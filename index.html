@@ -2,400 +2,522 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MUSITECH - Lógica Booleana</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MUSITECH — Lógica Booleana</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap');
-        
         :root {
-            --bg-main: #f8fafc;
-            --panel-bg: #ffffff;
+            --bg: #f0f6ff;
+            --card: #ffffff;
+            --border: #dce8f5;
             --accent: #0ea5e9;
-            --true-color: #10b981;
-            --false-color: #ef4444;
-            --text-main: #0f172a;
+            --accent2: #6366f1;
+            --green: #10b981;
+            --red: #ef4444;
+            --text: #0f172a;
+            --muted: #64748b;
+            --muted2: #94a3b8;
         }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
-            font-family: 'Outfit', sans-serif;
-            background-color: var(--bg-main);
-            background-image: 
-                radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.1) 0%, transparent 70%),
-                linear-gradient(rgba(226, 232, 240, 0.5) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(226, 232, 240, 0.5) 1px, transparent 1px);
-            background-size: 100% 100%, 40px 40px, 40px 40px;
-            color: var(--text-main);
-            height: 100vh;
-            width: 100vw;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            margin: 0;
+            font-family: 'Syne', sans-serif;
+            background-color: var(--bg);
+            background-image:
+                radial-gradient(circle at 60% 10%, rgba(14,165,233,0.08) 0%, transparent 50%),
+                linear-gradient(rgba(203,221,240,0.5) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(203,221,240,0.5) 1px, transparent 1px);
+            background-size: 100% 100%, 36px 36px, 36px 36px;
+            color: var(--text);
+            min-height: 100dvh;
+            overflow-x: hidden;
         }
 
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.85);
-            border: 1px solid rgba(14, 165, 233, 0.2);
-            backdrop-filter: blur(15px);
-            border-radius: 1.25rem;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+        .card {
+            background: var(--card);
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(14,165,233,0.06);
         }
 
-        /* Alavanca Tech */
-        .lever-base {
-            width: 54px;
-            height: 84px;
-            background: #e2e8f0;
-            border-radius: 12px;
+        /* ===== LEVER ===== */
+        .lever-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+
+        .lever-track {
+            width: 68px; height: 116px;
+            background: #f1f5f9;
+            border: 2px solid #cbd5e1;
+            border-radius: 18px;
             position: relative;
             cursor: pointer;
-            border: 2px solid #cbd5e1;
-            transition: all 0.3s;
+            transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
+            user-select: none; -webkit-user-select: none;
         }
-        
+        .lever-track:active { transform: scale(0.96); }
+        .lever-track.on  { border-color: var(--green); background: #ecfdf5; box-shadow: 0 0 16px rgba(16,185,129,0.2); }
+
         .lever-knob {
-            width: 38px;
-            height: 38px;
-            background: #ffffff;
-            border-radius: 8px;
-            position: absolute;
-            left: 6px;
-            top: 40px;
-            transition: 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            color: #64748b;
+            width: 50px; height: 50px; border-radius: 13px;
+            position: absolute; left: 7px;
+            transition: top 0.38s cubic-bezier(0.68,-0.55,0.27,1.55), background 0.3s, color 0.3s;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Space Mono', monospace; font-weight: 700; font-size: 17px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+        }
+        .lever-knob.on  { top: 7px;  background: var(--green); color: #fff; }
+        .lever-knob.off { top: 57px; background: #cbd5e1;      color: #64748b; }
+
+        .lever-label { font-size: 11px; font-weight: 700; color: var(--muted); font-family: 'Space Mono', monospace; }
+        .lever-val {
+            font-size: 10px; font-family: 'Space Mono', monospace; font-weight: 700;
+            padding: 3px 10px; border-radius: 20px;
+        }
+        .lever-val.on  { background: #d1fae5; color: var(--green); }
+        .lever-val.off { background: #f1f5f9; color: var(--muted); }
+
+        /* ===== WIRE ===== */
+        .wire-h {
+            height: 5px; border-radius: 3px; background: #e2e8f0;
+            position: relative; overflow: hidden; flex: 1;
+        }
+        .wire-h.active { background: #bae6fd; }
+        .wire-h.active::after {
+            content: ''; position: absolute; top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            animation: wflow 0.7s linear infinite;
+        }
+        @keyframes wflow { to { left: 200%; } }
+
+        /* ===== GATE CHIP ===== */
+        .gate-chip {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border: 2px solid #bae6fd;
+            border-radius: 18px;
+            padding: 16px 20px;
+            text-align: center;
+            min-width: 90px;
+            box-shadow: 0 4px 14px rgba(14,165,233,0.1);
+        }
+        .gate-name { font-size: 24px; font-weight: 800; color: var(--accent); letter-spacing: -0.02em; }
+
+        /* ===== OUTPUT LED ===== */
+        .output-led {
+            width: 76px; height: 76px; border-radius: 50%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-family: 'Space Mono', monospace; font-weight: 700; font-size: 22px;
+            border: 3px solid; transition: all 0.4s;
+        }
+        .output-led.on {
+            border-color: var(--green); background: #ecfdf5;
+            box-shadow: 0 0 28px rgba(16,185,129,0.35), 0 0 56px rgba(16,185,129,0.12);
+            color: var(--green);
+        }
+        .output-led.off { border-color: #cbd5e1; background: #f8fafc; color: #94a3b8; }
+
+        /* ===== BADGE ===== */
+        .badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 5px 14px; border-radius: 20px;
+            font-size: 11px; font-weight: 700; font-family: 'Space Mono', monospace;
+            letter-spacing: 0.06em; border: 1.5px solid;
+        }
+        .badge-on  { background: #d1fae5; color: #059669; border-color: #6ee7b7; }
+        .badge-off { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
+
+        .pulse-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .pulse-dot.on  { background: var(--green); animation: pdot 1.4s infinite; }
+        .pulse-dot.off { background: #f87171; }
+        @keyframes pdot {
+            0%,100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }
+            50%      { box-shadow: 0 0 0 7px rgba(16,185,129,0); }
         }
 
-        .lever.active .lever-base { border-color: var(--true-color); background: #dcfce7; }
-        .lever.active .lever-knob { top: 4px; background: var(--true-color); color: white; }
-
-        /* Conectores */
-        .wire {
-            height: 6px;
-            background: #e2e8f0;
-            border-radius: 3px;
-            position: relative;
-            overflow: hidden;
+        /* ===== ROCKET ===== */
+        .rocket-wrap { transition: transform 0.1s; }
+        .rocket-wrap.shaking { animation: rshk 0.08s infinite; }
+        @keyframes rshk {
+            0%   { transform: translate(1.5px, 0) rotate(0.6deg); }
+            50%  { transform: translate(-1.5px, 1px) rotate(-0.6deg); }
+            100% { transform: translate(0, -1px) rotate(0.2deg); }
         }
-        
-        .wire.active::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, var(--accent), #fff, transparent);
-            animation: flow 0.6s linear infinite;
+        .fire-grp { opacity: 0; transition: opacity 0.25s; }
+        .rocket-wrap.shaking .fire-grp { opacity: 1; }
+        .f1 { fill: #f97316; transform-origin: 30px 88px; }
+        .f2 { fill: #fbbf24; transform-origin: 30px 88px; }
+        .f3 { fill: #fff;    transform-origin: 30px 88px; }
+        .rocket-wrap.shaking .f1 { animation: fp 0.10s infinite alternate; }
+        .rocket-wrap.shaking .f2 { animation: fp 0.15s infinite alternate-reverse; }
+        .rocket-wrap.shaking .f3 { animation: fp 0.08s infinite alternate; }
+        @keyframes fp { to { transform: scaleY(1.6) scaleX(0.85); } }
+
+        /* ===== TRUTH TABLE ===== */
+        .ttable { width: 100%; border-collapse: separate; border-spacing: 4px;
+                  font-family: 'Space Mono', monospace; font-size: 12px; }
+        .ttable th { color: var(--muted); font-size: 10px; letter-spacing: 0.1em;
+                     padding: 6px; text-align: center; }
+        .ttable th.out { color: var(--accent); }
+        .ttable td { padding: 9px 6px; text-align: center; border-radius: 8px;
+                     background: #f8fafc; }
+        .ttable tr.cur td { background: #e0f2fe; outline: 2px solid var(--accent); outline-offset: -2px; }
+        .vv { color: var(--green); font-weight: 700; }
+        .vf { color: #94a3b8; font-weight: 700; }
+        .outv { color: var(--green); font-weight: 700; font-size: 14px; }
+        .outf { color: var(--red);   font-weight: 700; font-size: 14px; }
+
+        /* ===== STEP BOX ===== */
+        .step-box {
+            display: flex; gap: 10px; align-items: flex-start;
+            padding: 10px 14px; border-radius: 12px;
+            background: #f8fafc; border: 1.5px solid var(--border);
+            font-family: 'Space Mono', monospace; font-size: 12px; line-height: 1.6;
         }
+        .step-n { color: var(--muted2); min-width: 18px; font-weight: 700; }
 
-        @keyframes flow {
-            from { left: -100%; }
-            to { left: 100%; }
+        /* ===== RULE CARD ===== */
+        .rule-card {
+            background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 16px;
+            padding: 14px 18px;
         }
+        .rule-ttl { font-size: 10px; letter-spacing: 0.15em; color: var(--accent); font-weight: 700; margin-bottom: 5px; }
 
-        /* Tabela Verdade Clean */
-        .truth-table { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
-        .truth-table td { 
-            padding: 8px; text-align: center; border-radius: 6px;
-            background: rgba(241, 245, 249, 0.5);
-        }
-        .val-v { color: var(--true-color); font-weight: bold; }
-        .val-f { color: #94a3b8; }
-        .row-active { background: #e0f2fe !important; outline: 2px solid var(--accent); }
-
-        /* FOGUETE MELHORADO */
-        .rocket-svg { width: 140px; transition: 0.3s; }
-        
-        .rocket-active .rocket-svg {
-            animation: shake 0.05s infinite;
-        }
-
-        /* Fogo da Ignição */
-        .fire-group { opacity: 0; transition: 0.2s; transform-origin: top; }
-        .rocket-active .fire-group { opacity: 1; }
-
-        .flame-main { fill: #f97316; animation: flamePulse 0.1s infinite alternate; }
-        .flame-inner { fill: #fbbf24; animation: flamePulse 0.15s infinite alternate-reverse; }
-        .flame-core { fill: #ffffff; animation: flamePulse 0.08s infinite alternate; }
-
-        @keyframes flamePulse {
-            0% { transform: scaleY(1) scaleX(1); }
-            100% { transform: scaleY(1.4) scaleX(1.1); }
+        /* ===== HINT ===== */
+        .hint-box {
+            background: #fefce8; border: 1.5px dashed #fde68a; border-radius: 14px;
+            padding: 12px 16px; font-size: 13px; color: #78350f; line-height: 1.5;
         }
 
-        @keyframes shake {
-            0% { transform: translate(1px, 0); }
-            50% { transform: translate(-1px, 1px); }
-            100% { transform: translate(0, -1px); }
+        /* ===== PROGRESS ===== */
+        .ptrack { width: 100%; height: 7px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
+        .pfill  { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2));
+                  border-radius: 4px; transition: width 0.7s ease; }
+
+        /* ===== NEXT BTN ===== */
+        .next-btn {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: #fff; border: none; border-radius: 16px;
+            padding: 16px 32px; font-family: 'Syne', sans-serif;
+            font-weight: 800; font-size: 15px; letter-spacing: 0.05em;
+            cursor: pointer; width: 100%;
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: 0 6px 20px rgba(14,165,233,0.25);
+        }
+        .next-btn:active { transform: scale(0.97); }
+        .next-btn:hover  { box-shadow: 0 8px 26px rgba(14,165,233,0.4); }
+
+        .slabel { font-size: 9px; letter-spacing: 0.22em; color: var(--muted); font-weight: 700; text-transform: uppercase; margin-bottom: 10px; }
+
+        /* ===== DESKTOP GRID ===== */
+        @media (min-width: 768px) {
+            .main-grid { display: grid; grid-template-columns: 1fr 320px; gap: 20px; align-items: start; }
         }
 
-        .main-grid {
-            display: grid;
-            grid-template-rows: auto 1fr auto;
-            height: 100vh;
-            max-height: 100vh;
-            gap: 1.5rem;
-            padding: 1.5rem;
+        /* ===== VICTORY ===== */
+        #victory { display: none; position: fixed; inset: 0; background: var(--bg);
+                   z-index: 200; flex-direction: column; align-items: center;
+                   justify-content: center; text-align: center; padding: 32px; }
+        #victory.show { display: flex; }
+
+        @keyframes lvlIn {
+            0%   { opacity: 0; transform: scale(0.95) translateY(8px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
         }
+        .lvlin { animation: lvlIn 0.45s ease both; }
     </style>
 </head>
 <body>
 
-    <div class="main-grid max-w-7xl mx-auto w-full">
-        
-        <!-- Header -->
-        <header class="flex justify-between items-end pb-2 border-b-2 border-slate-200">
-            <div>
-                <h1 class="text-3xl font-black text-slate-900 tracking-tighter uppercase italic">
-                    <span class="text-sky-600">MUSITECH</span> — Lógica Booleana
-                </h1>
-                <p class="text-[10px] text-slate-400 font-bold tracking-[0.4em] uppercase">Control Room - Ignition Protocol</p>
-            </div>
-            <div class="flex gap-4">
-                <div class="glass-panel px-6 py-2 text-center border-slate-200 shadow-none">
-                    <div class="text-[9px] text-slate-400 font-black uppercase mb-1">Status</div>
-                    <div id="status-tag" class="text-sm font-black text-red-500">SISTEMA OFFLINE</div>
-                </div>
-                <div class="glass-panel px-6 py-2 text-center bg-sky-600 border-none shadow-lg shadow-sky-200">
-                    <div class="text-[9px] text-sky-100 font-bold uppercase mb-1">Módulo</div>
-                    <div id="level-display" class="text-sm font-black text-white">01 / 10</div>
-                </div>
-            </div>
-        </header>
+<!-- VICTORY -->
+<div id="victory">
+    <div style="font-size:96px;margin-bottom:8px;">🚀</div>
+    <h1 style="font-size:44px;font-weight:800;letter-spacing:-0.03em;margin-bottom:6px;color:var(--text)">
+        <span style="color:var(--accent)">MUSI</span>TECH
+    </h1>
+    <p style="font-family:'Space Mono',monospace;color:var(--green);font-size:13px;letter-spacing:0.12em;margin-bottom:10px;">✓ MISSÃO CONCLUÍDA</p>
+    <p style="color:var(--muted);font-size:14px;line-height:1.6;max-width:300px;margin-bottom:40px;">
+        Você dominou todos os 10 protocolos de lógica booleana. Foguete decolado com sucesso!
+    </p>
+    <button class="next-btn" style="max-width:280px" onclick="location.reload()">↺ REINICIAR MISSÃO</button>
+</div>
 
-        <!-- Área Principal -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 overflow-hidden">
-            
-            <!-- Painel de Dados -->
-            <div class="lg:col-span-3 flex flex-col gap-4 overflow-hidden">
-                <div class="glass-panel p-5 flex-1 flex flex-col overflow-hidden border-slate-200 shadow-sm">
-                    <div class="flex items-center gap-2 mb-4">
-                        <div class="w-2 h-4 bg-sky-500 rounded-full"></div>
-                        <h2 class="text-slate-800 text-xs font-black uppercase tracking-widest">Matriz de Verdade</h2>
+<!-- APP -->
+<div style="max-width:920px;margin:0 auto;padding:16px 16px 48px;">
+
+    <!-- HEADER -->
+    <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+        <div>
+            <div style="font-size:22px;font-weight:800;letter-spacing:-0.02em;color:var(--text)">
+                <span style="color:var(--accent)">MUSI</span>TECH
+            </div>
+            <div style="font-size:9px;letter-spacing:0.25em;color:var(--muted);font-weight:700;">LÓGICA BOOLEANA — PAINEL DE CONTROLE</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+            <div id="status-badge" class="badge badge-off">
+                <div id="status-dot" class="pulse-dot off"></div>
+                <span id="status-txt">OFFLINE</span>
+            </div>
+            <div class="card" style="padding:6px 16px;text-align:center;border-color:var(--accent);background:#f0f9ff;">
+                <div style="font-size:9px;color:var(--muted);letter-spacing:0.15em;font-family:'Space Mono',monospace;">MÓDULO</div>
+                <div id="level-num" style="font-family:'Space Mono',monospace;font-size:15px;font-weight:700;color:var(--accent);">01/10</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- PROGRESS -->
+    <div style="margin-bottom:20px;">
+        <div class="ptrack"><div id="pfill" class="pfill" style="width:10%"></div></div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="main-grid">
+
+        <!-- LEFT -->
+        <div style="display:flex;flex-direction:column;gap:16px;">
+
+            <!-- RULE -->
+            <div class="rule-card lvlin" id="rule-card">
+                <div class="rule-ttl">▸ PORTÃO <span id="gate-name-hdr">AND</span></div>
+                <p id="rule-txt" style="font-size:13px;color:#0369a1;line-height:1.5;"></p>
+            </div>
+
+            <!-- OBJ -->
+            <div class="hint-box">🎯 <strong>Missão:</strong> <span id="obj-txt"></span></div>
+
+            <!-- CIRCUIT -->
+            <div class="card" style="padding:22px 18px;">
+                <div class="slabel">CIRCUITO INTERATIVO</div>
+
+                <!-- Levers + gate + led -->
+                <div style="display:flex;align-items:center;gap:6px;justify-content:center;">
+                    <div id="levers-col" style="display:flex;flex-direction:column;gap:14px;"></div>
+                    <div id="wires-in-col" style="display:flex;flex-direction:column;gap:28px;flex:1;max-width:56px;min-width:20px;align-items:stretch;"></div>
+                    <div class="gate-chip">
+                        <div style="font-size:9px;letter-spacing:0.12em;color:var(--muted);margin-bottom:3px;font-family:'Space Mono',monospace;">GATE</div>
+                        <div id="gate-lbl" class="gate-name">AND</div>
                     </div>
-                    <div class="overflow-y-auto flex-1 custom-scrollbar">
-                        <table id="truth-table-el" class="truth-table w-full border-separate border-spacing-1"></table>
+                    <div style="flex:1;max-width:56px;min-width:20px;display:flex;align-items:center;">
+                        <div id="wire-out" class="wire-h"></div>
                     </div>
-                </div>
-                
-                <div class="glass-panel p-5 h-40 flex flex-col justify-center bg-sky-50 border-sky-200">
-                    <div id="gate-type" class="text-[10px] font-black text-sky-600 uppercase mb-1 tracking-tighter">Portão AND</div>
-                    <p id="objective-text" class="text-lg font-extrabold text-slate-800 leading-tight">Inicie os propulsores!</p>
-                    <p id="rule-desc" class="text-xs text-slate-500 font-medium mt-1"></p>
-                </div>
-            </div>
-
-            <!-- Circuito Interativo -->
-            <div id="circuit-area" class="lg:col-span-9 glass-panel relative flex items-center justify-around px-12 bg-white/50 border-2 border-white shadow-inner">
-                
-                <!-- Inputs -->
-                <div id="inputs-container" class="flex flex-col gap-10 z-10"></div>
-                
-                <!-- Fluxo -->
-                <div id="wires-in" class="hidden md:flex flex-col justify-around h-1/2 flex-1 max-w-[100px] px-4"></div>
-
-                <!-- Processador Core -->
-                <div class="z-10 text-center">
-                    <div class="w-32 h-32 glass-panel border-4 border-white flex flex-col items-center justify-center shadow-xl">
-                        <div class="text-[8px] font-black text-sky-500 mb-1 tracking-widest">PROCESSOR</div>
-                        <div id="gate-label" class="text-3xl font-black text-slate-800 tracking-tighter">AND</div>
-                        <div class="mt-2 flex gap-1">
-                            <div class="w-1 h-1 bg-sky-400 rounded-full animate-pulse"></div>
-                            <div class="w-1 h-1 bg-sky-400 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                        <div id="out-led" class="output-led off">
+                            <span id="out-val" style="font-size:11px;font-family:'Space Mono',monospace;font-weight:700;">F</span>
                         </div>
+                        <div style="font-size:9px;color:var(--muted);font-family:'Space Mono',monospace;letter-spacing:0.1em;">SAÍDA</div>
                     </div>
                 </div>
 
-                <!-- Fluxo Out -->
-                <div id="wire-out" class="hidden md:block flex-1 max-w-[100px] px-4"></div>
+                <!-- DIVIDER -->
+                <div style="border-top:1.5px dashed var(--border);margin:20px 0;"></div>
 
-                <!-- FOGUETE E IGNIÇÃO -->
-                <div id="rocket-container" class="flex flex-col items-center">
-                    <div class="relative">
-                        <svg class="rocket-svg" viewBox="0 0 60 120">
-                            <!-- Fogo de Ignição Potencializado -->
-                            <g class="fire-group">
-                                <path class="flame-main" d="M10 85 Q30 140 50 85 L30 110 Z" />
-                                <path class="flame-inner" d="M18 85 Q30 125 42 85 L30 105 Z" />
-                                <path class="flame-core" d="M25 85 Q30 105 35 85 L30 95 Z" />
+                <!-- ROCKET -->
+                <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+                    <div class="slabel" style="margin-bottom:2px;">MOTOR DE IGNIÇÃO</div>
+                    <div id="rocket-wrap" class="rocket-wrap">
+                        <svg width="110" height="180" viewBox="0 0 60 130" style="display:block;overflow:visible;">
+                            <!-- CHAMAS -->
+                            <g class="fire-grp">
+                                <path class="f1" d="M16 90 Q30 148 44 90 Q30 124 16 90Z"/>
+                                <path class="f2" d="M21 90 Q30 134 39 90 Q30 118 21 90Z"/>
+                                <path class="f3" d="M26 90 Q30 114 34 90 Q30 106 26 90Z"/>
                             </g>
-                            <!-- Corpo Moderno -->
-                            <path fill="#cbd5e1" d="M30 5 C15 30 10 50 10 80 L50 80 C50 50 45 30 30 5 Z" />
-                            <path fill="#f1f5f9" d="M30 5 C22 30 20 50 20 80 L30 80 Z" /> <!-- Sombra/Destaque -->
-                            <!-- Janela -->
-                            <circle cx="30" cy="35" r="6" fill="#0ea5e9" stroke="white" stroke-width="2" />
-                            <!-- Barbatanas -->
-                            <path fill="#334155" d="M10 65 L-5 85 L10 85 Z" />
-                            <path fill="#334155" d="M50 65 L65 85 L50 85 Z" />
-                            <!-- Detalhe da Base -->
-                            <rect x="15" y="80" width="30" height="6" rx="2" fill="#1e293b" />
+                            <!-- BARBATANAS -->
+                            <path fill="#94a3b8" d="M10 68 L-3 90 L16 84Z"/>
+                            <path fill="#94a3b8" d="M50 68 L63 90 L44 84Z"/>
+                            <!-- CORPO -->
+                            <path fill="#e2e8f0" d="M30 6 C14 34 10 56 10 90 L50 90 C50 56 46 34 30 6Z"/>
+                            <!-- DESTAQUE -->
+                            <path fill="#f8fafc" d="M30 6 C22 34 20 56 20 90 L28 90 C28 56 26 34 30 6Z" opacity="0.8"/>
+                            <!-- JANELA -->
+                            <circle cx="30" cy="40" r="10" fill="#0ea5e9" stroke="white" stroke-width="2.5"/>
+                            <circle cx="30" cy="40" r="5.5" fill="#0c4a6e" opacity="0.7"/>
+                            <circle cx="27" cy="37" r="2.2" fill="white" opacity="0.5"/>
+                            <!-- STRIPE -->
+                            <rect x="20" y="64" width="20" height="4" rx="2" fill="#0ea5e9" opacity="0.4"/>
+                            <!-- BASE -->
+                            <rect x="14" y="90" width="32" height="8" rx="3" fill="#64748b"/>
+                            <!-- BOCAL -->
+                            <path fill="#475569" d="M20 98 Q30 107 40 98 L37 94 Q30 102 23 94Z"/>
                         </svg>
                     </div>
-                    <div id="engine-status" class="mt-6 text-[10px] font-black text-slate-400 tracking-[0.4em] uppercase text-center">Status: Repouso</div>
+                    <div id="engine-lbl" style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.15em;text-align:center;">STATUS: REPOUSO</div>
                 </div>
+            </div>
+
+            <!-- STEPS -->
+            <div class="card" style="padding:18px;">
+                <div class="slabel">PASSO A PASSO DA LÓGICA</div>
+                <div id="logic-steps" style="display:flex;flex-direction:column;gap:8px;"></div>
+            </div>
+
+            <!-- NEXT -->
+            <div id="next-wrap" style="display:none;">
+                <button class="next-btn" onclick="nextLevel()">CONFIRMAR IGNIÇÃO → PRÓXIMO</button>
             </div>
         </div>
 
-        <!-- Footer -->
-        <footer class="h-20 flex justify-between items-center gap-8 px-2">
-            <div class="flex-1 flex items-center gap-4">
-                <div class="flex-1 bg-slate-200 h-3 rounded-full overflow-hidden border border-white shadow-inner">
-                    <div id="progress-bar" class="bg-sky-500 h-full transition-all duration-700 ease-out" style="width: 10%"></div>
-                </div>
-                <span id="hint-text" class="text-xs text-slate-500 font-bold uppercase tracking-wider min-w-[200px]">Aguardando Comando...</span>
+        <!-- RIGHT -->
+        <div style="display:flex;flex-direction:column;gap:16px;margin-top:0;">
+
+            <div class="card" style="padding:20px;">
+                <div class="slabel">TABELA VERDADE</div>
+                <p style="font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.5;">
+                    A linha <span style="color:var(--accent);font-weight:700;">destacada</span> mostra sua seleção atual.
+                </p>
+                <table id="truth-tbl" class="ttable"></table>
             </div>
-            <button id="next-btn" class="hidden bg-sky-600 text-white px-10 py-4 rounded-2xl font-black text-sm hover:bg-sky-700 transition-all transform hover:scale-105 active:scale-95 shadow-lg shadow-sky-200 uppercase tracking-widest">
-                Confirmar Ignição →
-            </button>
-        </footer>
-    </div>
 
-    <script>
-        const levels = [
-            { id: 1, gate: "SINAL", rule: "A saída é exatamente igual à entrada.", obj: "Transmita energia ao motor.", inputs: 1, check: (i) => i[0] },
-            { id: 2, gate: "NOT", rule: "O sinal é invertido (V ↔ F).", obj: "Corte o sinal para ligar o motor.", inputs: 1, check: (i) => !i[0] },
-            { id: 3, gate: "AND", rule: "Ambas as entradas precisam ser Verdadeiras.", obj: "Sincronize os dois canais de força.", inputs: 2, check: (i) => i[0] && i[1] },
-            { id: 4, gate: "OR", rule: "Basta uma entrada ser Verdadeira.", obj: "Ative qualquer canal para ignição.", inputs: 2, check: (i) => i[0] || i[1] },
-            { id: 5, gate: "NAND", rule: "Falso apenas se as duas forem Verdadeiras.", obj: "Não sobrecarregue (evite ambas em V).", inputs: 2, check: (i) => !(i[0] && i[1]) },
-            { id: 6, gate: "XOR", rule: "Verdadeiro se forem diferentes.", obj: "Alterne as chaves em posições opostas.", inputs: 2, check: (i) => i[0] !== i[1] },
-            { id: 7, gate: "NOR", rule: "Verdadeiro se ambas forem Falsas.", obj: "Mantenha o silêncio total nos canais.", inputs: 2, check: (i) => !(i[0] || i[1]) },
-            { id: 8, gate: "XNOR", rule: "Verdadeiro se forem iguais.", obj: "Equilibre as chaves (V-V ou F-F).", inputs: 2, check: (i) => i[0] === i[1] },
-            { id: 9, gate: "LOCK", rule: "Canal A=V e Canal B=F.", obj: "Configuração de segurança alfa.", inputs: 2, check: (i) => i[0] && !i[1] },
-            { id: 10, gate: "MASTER", rule: "A=V, B=F, C=V.", obj: "Sequência Mestre de Decolagem!", inputs: 3, check: (i) => i[0] && !i[1] && i[2] }
-        ];
-
-        let currentLevel = 0;
-        let state = [false, false, false];
-
-        function render() {
-            const level = levels[currentLevel];
-            const isWin = level.check(state);
-
-            // Update Header & Texts
-            document.getElementById('level-display').innerText = `${String(level.id).padStart(2, '0')} / 10`;
-            document.getElementById('gate-type').innerText = `Portão ${level.gate}`;
-            document.getElementById('gate-label').innerText = level.gate;
-            document.getElementById('objective-text').innerText = level.obj;
-            document.getElementById('rule-desc').innerText = `Protocolo: ${level.rule}`;
-            document.getElementById('progress-bar').style.width = `${(level.id/10)*100}%`;
-
-            // Status Tag
-            const statusTag = document.getElementById('status-tag');
-            statusTag.innerText = isWin ? "SISTEMA PRONTO" : "SISTEMA OFFLINE";
-            statusTag.className = isWin ? "text-sm font-black text-green-500" : "text-sm font-black text-red-500";
-
-            // Render Levers
-            const inputContainer = document.getElementById('inputs-container');
-            inputContainer.innerHTML = '';
-            for(let i=0; i<level.inputs; i++) {
-                const div = document.createElement('div');
-                div.className = `lever flex items-center gap-4 ${state[i] ? 'active' : ''}`;
-                div.innerHTML = `
-                    <div class="lever-base" onclick="toggle(${i})">
-                        <div class="lever-knob">${state[i] ? 'V' : 'F'}</div>
+            <div class="card" style="padding:18px;">
+                <div class="slabel">LEGENDA</div>
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                    <div style="display:flex;align-items:center;gap:10px;font-size:12px;color:#475569;">
+                        <span style="font-family:'Space Mono',monospace;font-weight:700;color:var(--green);width:28px;text-align:center;">V</span>
+                        <span>Verdadeiro — chave <strong>ligada</strong></span>
                     </div>
-                    <span class="text-xs font-black text-slate-400">CH-${String.fromCharCode(65+i)}</span>
-                `;
-                inputContainer.appendChild(div);
-            }
-
-            // Wires Logic
-            const wireIn = document.getElementById('wires-in');
-            wireIn.innerHTML = '';
-            for(let i=0; i<level.inputs; i++) {
-                wireIn.innerHTML += `<div class="wire w-full ${state[i] ? 'active' : ''}"></div>`;
-            }
-            document.getElementById('wire-out').innerHTML = `<div class="wire w-full ${isWin ? 'active' : ''}"></div>`;
-
-            // Rocket & Ignition
-            const rocketCont = document.getElementById('rocket-container');
-            const engineLabel = document.getElementById('engine-status');
-            const nextBtn = document.getElementById('next-btn');
-
-            if(isWin) {
-                rocketCont.classList.add('rocket-active');
-                engineLabel.innerText = "EMPULO MÁXIMO";
-                engineLabel.className = "mt-6 text-[10px] font-black text-sky-600 tracking-[0.4em] uppercase text-center";
-                nextBtn.classList.remove('hidden');
-                document.getElementById('hint-text').innerText = "Ignição autorizada. Pressione o botão.";
-            } else {
-                rocketCont.classList.remove('rocket-active');
-                engineLabel.innerText = "STATUS: REPOUSO";
-                engineLabel.className = "mt-6 text-[10px] font-black text-slate-400 tracking-[0.4em] uppercase text-center";
-                nextBtn.classList.add('hidden');
-                document.getElementById('hint-text').innerText = "Aguardando entrada correta...";
-            }
-
-            renderTable(level);
-        }
-
-        function renderTable(level) {
-            const table = document.getElementById('truth-table-el');
-            table.innerHTML = '';
-            const numRows = Math.pow(2, level.inputs);
-            
-            // Header row
-            const trh = document.createElement('tr');
-            for(let i=0; i<level.inputs; i++) trh.innerHTML += `<th class="text-[9px] text-slate-400 pb-2">${String.fromCharCode(65+i)}</th>`;
-            trh.innerHTML += `<th class="text-[9px] text-sky-500 pb-2">OUT</th>`;
-            table.appendChild(trh);
-
-            for(let r=0; r<numRows; r++) {
-                const tr = document.createElement('tr');
-                const rowInputs = level.inputs === 2 ? [(r&2)>0, (r&1)>0] : 
-                                 (level.inputs === 3 ? [(r&4)>0, (r&2)>0, (r&1)>0] : [r===1]);
-                
-                const out = level.check(rowInputs);
-                const isActive = rowInputs.every((v, i) => v === state[i]);
-                if(isActive) tr.className = 'row-active';
-
-                rowInputs.forEach(v => {
-                    tr.innerHTML += `<td class="${v ? 'val-v' : 'val-f'}">${v ? 'V' : 'F'}</td>`;
-                });
-                tr.innerHTML += `<td class="${out ? 'val-v' : 'val-f'}">${out ? 'V' : 'F'}</td>`;
-                table.appendChild(tr);
-            }
-        }
-
-        function toggle(i) {
-            state[i] = !state[i];
-            render();
-        }
-
-        document.getElementById('next-btn').onclick = () => {
-            if(currentLevel < levels.length - 1) {
-                currentLevel++;
-                state = [false, false, false];
-                render();
-            } else {
-                showVictory();
-            }
-        };
-
-        function showVictory() {
-            document.body.innerHTML = `
-                <div class="h-screen w-screen flex flex-col items-center justify-center bg-white p-6 text-center">
-                    <div class="mb-8 animate-bounce">
-                         <svg class="w-40 h-40" viewBox="0 0 60 120">
-                            <path fill="#f97316" d="M10 85 Q30 140 50 85 L30 110 Z" />
-                            <path fill="#cbd5e1" d="M30 5 C15 30 10 50 10 80 L50 80 C50 50 45 30 30 5 Z" />
-                        </svg>
+                    <div style="display:flex;align-items:center;gap:10px;font-size:12px;color:#475569;">
+                        <span style="font-family:'Space Mono',monospace;font-weight:700;color:#94a3b8;width:28px;text-align:center;">F</span>
+                        <span>Falso — chave <strong>desligada</strong></span>
                     </div>
-                    <h1 class="text-7xl font-black text-slate-900 mb-2 italic tracking-tighter"><span class="text-sky-600">MUSITECH</span></h1>
-                    <h2 class="text-2xl font-bold text-slate-800 mb-4">MISSÃO CUMPRIDA!</h2>
-                    <p class="text-slate-500 font-medium mb-12">Você dominou todos os protocolos de lógica.</p>
-                    <button onclick="location.reload()" class="bg-sky-600 text-white px-16 py-5 rounded-3xl font-black hover:bg-sky-700 transition-all shadow-xl shadow-sky-200">REINICIAR SISTEMA</button>
+                    <div style="display:flex;align-items:center;gap:10px;font-size:12px;color:#475569;">
+                        <div style="width:28px;height:14px;background:#e0f2fe;border:2px solid var(--accent);border-radius:4px;"></div>
+                        <span>= sua escolha atual</span>
+                    </div>
+                    <div style="margin-top:4px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);line-height:1.5;">
+                        Clique nas alavancas para alternar. Quando a saída acender <span style="color:var(--green);font-weight:700;">verde</span>, o foguete ignite! 🚀
+                    </div>
                 </div>
-            `;
-        }
+            </div>
+        </div>
+    </div>
+</div>
 
-        window.onload = render;
-    </script>
+<script>
+const levels = [
+    { id:1, gate:"SINAL", rule:"A saída é <strong>idêntica</strong> à entrada. Se A for Verdadeiro, a saída será Verdadeiro.", obj:"Transmita energia ao motor. Ligue a chave A.", inputs:1, check:i=>i[0],
+      steps:s=>[`Entrada A = <span class="${s[0]?'vv':'vf'}">${s[0]?'V':'F'}</span>`,`Saída = A = <span class="${s[0]?'outv':'outf'}">${s[0]?'V':'F'}</span>`] },
+    { id:2, gate:"NOT", rule:"A saída é o <strong>oposto</strong> da entrada: V vira F, e F vira V.", obj:"Desligue A para que a saída seja V.", inputs:1, check:i=>!i[0],
+      steps:s=>[`Entrada A = <span class="${s[0]?'vv':'vf'}">${s[0]?'V':'F'}</span>`,`NOT inverte: <span class="${s[0]?'vf':'vv'}">${s[0]?'F':'V'}</span>`,`Saída = <span class="${!s[0]?'outv':'outf'}">${!s[0]?'V':'F'}</span>`] },
+    { id:3, gate:"AND", rule:"<strong>Ambas</strong> as entradas precisam ser Verdadeiras para a saída ser V.", obj:"Ligue A e B ao mesmo tempo.", inputs:2, check:i=>i[0]&&i[1],
+      steps:s=>[`A = <span class="${s[0]?'vv':'vf'}">${s[0]?'V':'F'}</span> &nbsp; B = <span class="${s[1]?'vv':'vf'}">${s[1]?'V':'F'}</span>`,`Ambas V? → <span class="${(s[0]&&s[1])?'outv':'outf'}">${(s[0]&&s[1])?'SIM → V':'NÃO → F'}</span>`] },
+    { id:4, gate:"OR", rule:"<strong>Basta uma</strong> entrada ser Verdadeira para ativar a saída.", obj:"Ligue A, B, ou ambas.", inputs:2, check:i=>i[0]||i[1],
+      steps:s=>[`A = <span class="${s[0]?'vv':'vf'}">${s[0]?'V':'F'}</span> &nbsp; B = <span class="${s[1]?'vv':'vf'}">${s[1]?'V':'F'}</span>`,`Ao menos uma V? → <span class="${(s[0]||s[1])?'outv':'outf'}">${(s[0]||s[1])?'SIM → V':'NÃO → F'}</span>`] },
+    { id:5, gate:"NAND", rule:"Oposto do AND: saída é F <strong>somente</strong> quando as duas são V.", obj:"Evite que A e B sejam V ao mesmo tempo.", inputs:2, check:i=>!(i[0]&&i[1]),
+      steps:s=>[`A = <span class="${s[0]?'vv':'vf'}">${s[0]?'V':'F'}</span> &nbsp; B = <span class="${s[1]?'vv':'vf'}">${s[1]?'V':'F'}</span>`,`AND interno: ${(s[0]&&s[1])?'<span class="vv">V</span>':'<span class="vf">F</span>'}`,`NOT do AND → <span class="${!(s[0]&&s[1])?'outv':'outf'}">${!(s[0]&&s[1])?'V':'F'}</span>`] },
+    { id:6, gate:"XOR", rule:"Saída V quando as entradas são <strong>diferentes</strong> entre si.", obj:"Coloque A e B em posições opostas (uma V, outra F).", inputs:2, check:i=>i[0]!==i[1],
+      steps:s=>[`A = <span class="${s[0]?'vv':'vf'}">${s[0]?'V':'F'}</span> &nbsp; B = <span class="${s[1]?'vv':'vf'}">${s[1]?'V':'F'}</span>`,`A ≠ B? → <span class="${(s[0]!==s[1])?'outv':'outf'}">${(s[0]!==s[1])?'SIM → V':'NÃO → F'}</span>`] },
+    { id:7, gate:"NOR", rule:"Saída V <strong>somente</strong> quando as duas entradas são Falsas.", obj:"Silêncio total: mantenha A e B desligados.", inputs:2, check:i=>!(i[0]||i[1]),
+      steps:s=>[`A = <span class="${s[0]?'vv':'vf'}">${s[0]?'V':'F'}</span> &nbsp; B = <span class="${s[1]?'vv':'vf'}">${s[1]?'V':'F'}</span>`,`OR interno: ${(s[0]||s[1])?'<span class="vv">V</span>':'<span class="vf">F</span>'}`,`NOT do OR → <span class="${!(s[0]||s[1])?'outv':'outf'}">${!(s[0]||s[1])?'V':'F'}</span>`] },
+    { id:8, gate:"XNOR", rule:"Saída V quando as entradas são <strong>iguais</strong> (V-V ou F-F).", obj:"Equilibre as chaves na mesma posição.", inputs:2, check:i=>i[0]===i[1],
+      steps:s=>[`A = <span class="${s[0]?'vv':'vf'}">${s[0]?'V':'F'}</span> &nbsp; B = <span class="${s[1]?'vv':'vf'}">${s[1]?'V':'F'}</span>`,`A = B? → <span class="${(s[0]===s[1])?'outv':'outf'}">${(s[0]===s[1])?'SIM → V':'NÃO → F'}</span>`] },
+    { id:9, gate:"LOCK-α", rule:"Protocolo de segurança: exige A=V <strong>e</strong> B=F para liberar.", obj:"Ligue A e mantenha B desligado.", inputs:2, check:i=>i[0]&&!i[1],
+      steps:s=>[`A = <span class="${s[0]?'vv':'vf'}">${s[0]?'V':'F'}</span> ${s[0]?'✓':'✗ precisa ser V'}`,`B = <span class="${s[1]?'vv':'vf'}">${s[1]?'V':'F'}</span> ${!s[1]?'✓':'✗ precisa ser F'}`,`Acesso: <span class="${(s[0]&&!s[1])?'outv':'outf'}">${(s[0]&&!s[1])?'LIBERADO → V':'NEGADO → F'}</span>`] },
+    { id:10, gate:"MASTER", rule:"Sequência final: A=V, B=F e C=V — <strong>exatamente assim</strong>.", obj:"Ligue A, desligue B e ligue C. Decolagem! 🚀", inputs:3, check:i=>i[0]&&!i[1]&&i[2],
+      steps:s=>[`A = <span class="${s[0]?'vv':'vf'}">${s[0]?'V':'F'}</span> ${s[0]?'✓':'✗ precisa ser V'}`,`B = <span class="${s[1]?'vv':'vf'}">${s[1]?'V':'F'}</span> ${!s[1]?'✓':'✗ precisa ser F'}`,`C = <span class="${s[2]?'vv':'vf'}">${s[2]?'V':'F'}</span> ${s[2]?'✓':'✗ precisa ser V'}`,`Resultado: <span class="${(s[0]&&!s[1]&&s[2])?'outv':'outf'}">${(s[0]&&!s[1]&&s[2])?'🚀 DECOLAGEM → V':'AGUARDANDO → F'}</span>`] }
+];
+
+let lvl=0, state=[false,false,false];
+
+function toggle(i){ state[i]=!state[i]; render(); }
+
+function render(){
+    const L=levels[lvl], win=L.check(state);
+
+    document.getElementById('level-num').innerText=`${String(L.id).padStart(2,'0')}/10`;
+    document.getElementById('pfill').style.width=`${(L.id/10)*100}%`;
+
+    const badge=document.getElementById('status-badge');
+    badge.className=`badge ${win?'badge-on':'badge-off'}`;
+    document.getElementById('status-dot').className=`pulse-dot ${win?'on':'off'}`;
+    document.getElementById('status-txt').innerText=win?'SISTEMA PRONTO':'SISTEMA OFFLINE';
+
+    document.getElementById('gate-name-hdr').innerText=L.gate;
+    document.getElementById('gate-lbl').innerText=L.gate;
+    document.getElementById('rule-txt').innerHTML=L.rule;
+    document.getElementById('obj-txt').innerText=L.obj;
+
+    // Levers
+    const lc=document.getElementById('levers-col');
+    lc.innerHTML='';
+    for(let i=0;i<L.inputs;i++){
+        const on=state[i], d=document.createElement('div');
+        d.className='lever-wrap';
+        d.innerHTML=`
+            <div class="lever-track ${on?'on':'off'}" onclick="toggle(${i})" role="button" tabindex="0"
+                 onkeydown="if(event.key==='Enter'||event.key===' ')toggle(${i})">
+                <div class="lever-knob ${on?'on':'off'}">${on?'V':'F'}</div>
+            </div>
+            <div class="lever-label">CH-${String.fromCharCode(65+i)}</div>
+            <div class="lever-val ${on?'on':'off'}">${on?'Verdadeiro':'Falso'}</div>`;
+        lc.appendChild(d);
+    }
+
+    // Wires in
+    const wi=document.getElementById('wires-in-col');
+    wi.innerHTML='';
+    for(let i=0;i<L.inputs;i++){
+        const w=document.createElement('div');
+        w.className=`wire-h ${state[i]?'active':''}`;
+        wi.appendChild(w);
+    }
+
+    document.getElementById('wire-out').className=`wire-h ${win?'active':''}`;
+    document.getElementById('out-led').className=`output-led ${win?'on':'off'}`;
+    document.getElementById('out-val').innerText=win?'V':'F';
+
+    // Rocket
+    const rw=document.getElementById('rocket-wrap'), el=document.getElementById('engine-lbl');
+    if(win){ rw.classList.add('shaking'); el.innerText='🔥 EMPUXO MÁXIMO'; el.style.color='#0ea5e9'; el.style.fontWeight='700'; }
+    else   { rw.classList.remove('shaking'); el.innerText='STATUS: REPOUSO'; el.style.color=''; el.style.fontWeight=''; }
+
+    document.getElementById('next-wrap').style.display=win?'block':'none';
+
+    // Steps
+    const ls=document.getElementById('logic-steps');
+    ls.innerHTML='';
+    L.steps(state).forEach((s,idx,arr)=>{
+        const d=document.createElement('div');
+        d.className='step-box';
+        const last=idx===arr.length-1;
+        if(last){ d.style.borderColor=win?'var(--green)':'var(--border)'; d.style.background=win?'#ecfdf5':'#f8fafc'; }
+        d.innerHTML=`<span class="step-n">${idx+1}.</span><span>${s}</span>`;
+        ls.appendChild(d);
+    });
+
+    renderTable(L);
+}
+
+function renderTable(L){
+    const tbl=document.getElementById('truth-tbl');
+    tbl.innerHTML='';
+    const th=document.createElement('tr');
+    for(let i=0;i<L.inputs;i++) th.innerHTML+=`<th>${String.fromCharCode(65+i)}</th>`;
+    th.innerHTML+=`<th class="out">OUT</th>`;
+    tbl.appendChild(th);
+    const rows=Math.pow(2,L.inputs);
+    for(let r=0;r<rows;r++){
+        const ri=L.inputs===1?[r===1]:L.inputs===2?[(r&2)>0,(r&1)>0]:[(r&4)>0,(r&2)>0,(r&1)>0];
+        const out=L.check(ri), cur=ri.every((v,i)=>v===state[i]);
+        const tr=document.createElement('tr');
+        if(cur) tr.className='cur';
+        ri.forEach(v=>{ tr.innerHTML+=`<td class="${v?'vv':'vf'}">${v?'V':'F'}</td>`; });
+        tr.innerHTML+=`<td class="${out?'vv':'vf'}">${out?'V':'F'}</td>`;
+        tbl.appendChild(tr);
+    }
+}
+
+function nextLevel(){
+    if(lvl<levels.length-1){
+        lvl++; state=[false,false,false];
+        const rc=document.getElementById('rule-card');
+        rc.classList.remove('lvlin'); void rc.offsetWidth; rc.classList.add('lvlin');
+        render(); window.scrollTo({top:0,behavior:'smooth'});
+    } else {
+        document.getElementById('victory').classList.add('show');
+    }
+}
+
+render();
+</script>
 </body>
 </html>
